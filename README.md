@@ -28,3 +28,15 @@ Open http://localhost:3000 on a phone-sized viewport.
 5. Bandit recommender + "why this pick" label
 
 Watch-provider data is supplied by [JustWatch](https://www.justwatch.com) via TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.
+
+## API (server route handlers)
+
+All TMDB and YouTube calls run on the server; keys never reach the browser. `TMDB_API_KEY` can be a v3 API key or a v4 read access token.
+
+| Route | What it returns |
+| --- | --- |
+| `GET /api/providers?region=US` | Streaming services in the region (id, name, logo), sorted by popularity. Feeds the setup screen. |
+| `GET /api/genres` | Movie + TV genres merged. These are the bandit's arms. |
+| `GET /api/feed?providers=8,9&type=all&page=1&genres=28,35&exclude=movie:550` | One page of feed cards: `/discover` results on any of your services, movies and shows interleaved, each with a YouTube trailer key, genres, the TMDB watch link and which of your services carry it. Titles with no trailer are dropped. |
+
+Trailers come from TMDB `/videos`. If TMDB has none and `YOUTUBE_API_KEY` is set, it falls back to a YouTube search (100 quota units per call, cached for a day).
